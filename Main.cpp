@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
   //   // for (int j = 0; j < board.size; j++) output << " _";
   // }
   output << "\nSolving....\n\n";
-  board.solve();
+  board.solveEverything();
   output << board.print(is_finished);
   if (is_finished) output << "\nI\'m Finished!";
   else output << "\nHmmm...I couldn\'t quite figure that one out.";

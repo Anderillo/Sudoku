@@ -56,9 +56,9 @@ void Board::missingInSquare(vector<int> &curr_missing, int row_num, int col_num)
   col_num -= col_num % size_sqrt;
   int found = -1;
 
-  for (int i = row_num; i < size_sqrt; i++)
+  for (int i = row_num; i < (row_num + size_sqrt); i++)
   {
-    for (int j = col_num; j < size_sqrt; j++)
+    for (int j = col_num; j < (col_num + size_sqrt); j++)
     {
       if (the_board[i][j].size() == 1) found = find(curr_missing, the_board[i][j][0]);
       if (found != -1) curr_missing.erase(curr_missing.begin()+found);
@@ -162,7 +162,7 @@ void Board::solve()
             {
               the_board[i][j].clear();
               the_board[i][j].push_back(the_board[i][j][k]);
-              changed = true;
+              // changed = true;
               // break;
             }
           }
@@ -171,6 +171,51 @@ void Board::solve()
     }
     // if (changed == false) cout << "HOORAY!" << endl;
   }
+}
+
+void Board::findNextUnfinishedSquare(int &curr_i, int &curr_j, int &length)
+{
+  for (int i = curr_i; i < size; i++)
+  {
+    for (int j = curr_j; j < size; j++)
+    {
+      if (the_board[i][j].size() > 1)
+      {
+        curr_i = i;
+        curr_j = j;
+        return;
+      }
+    }
+  }
+}
+
+bool Board::guesser(int curr_i, int curr_j)
+{
+  int original_curr_i = curr_i;
+  int original_curr_j = curr_j;
+  solve();
+  bool is_finished = true;
+  print(is_finished);
+  if (is_finished) return true;
+  vector<int> temp_vec = the_board[curr_i][curr_j];
+  int length = temp_vec.size();
+  for (int i = 0; i < length; i++)
+  {
+    the_board[curr_i][curr_j].clear();
+    the_board[curr_i][curr_j].push_back(temp_vec[i]);
+    findNextUnfinishedSquare(curr_i, curr_j, length);
+    is_finished = guesser(curr_i, curr_j);
+    if (is_finished) return true;
+  }
+  the_board[original_curr_i][original_curr_j] = temp_vec;
+  return false;
+}
+
+void Board::solveEverything()
+{
+  // Uncomment the next line to add guessing capabilities (and you can comment out the "solve()" line)
+  guesser(0, 0);
+  // solve();
 }
 
 string Board::print(bool &is_finished)
@@ -193,6 +238,30 @@ string Board::print(bool &is_finished)
         // ss << "|";
         is_finished = false;
       }
+    }
+    ss << endl;
+    // for (int j = 0; j < size; j++) ss << " _";
+  }
+  return ss.str();
+}
+
+string Board::printTest(bool &is_finished)
+{
+  is_finished = true;
+  stringstream ss;
+  // for (int i = 0; i < size; i++) ss << " _";
+  for (int i = 0; i < size; i++)
+  {
+    // ss << "\n|";
+    // ss  ;
+    for (int j = 0; j < size; j++)
+    {
+      for (int k = 0; k < the_board[i][j].size(); k++)
+      {
+        ss << the_board[i][j][k] << " ";
+      }
+      ss << endl;
+      if (the_board[i][j].size() != 1) is_finished = false;
     }
     ss << endl;
     // for (int j = 0; j < size; j++) ss << " _";

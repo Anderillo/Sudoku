@@ -26,5 +26,9 @@ public:
   bool checkForOnlyOption(int index_to_avoid1, int index_to_avoid2, int possible_good_num);
   bool initialize();
   void solve();
+  void findNextUnfinishedSquare(int &curr_i, int &curr_j, int &length);
+  bool guesser(int curr_i, int curr_j);
+  void solveEverything();
   string print(bool &is_finished);
+  string printTest(bool &is_finished);
 };
