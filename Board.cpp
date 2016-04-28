@@ -6,18 +6,18 @@ Board::Board(vector<vector<vector<int>>> the_board)
   size = the_board.size();
 }
 
-int Board::find(vector<int> &the_vector, int value)
+int Board::find(vector<int> the_vector, int value)
 {
-  //cout << "Here20"  ;
+  // cout << "Here20";
   // cout << "Here2: " << the_vector.size() << endl;
   // cout << "Here3: " << value << endl;
   for (int i = 0; i < the_vector.size(); i++)
   {
-    //cout << "Here18"  ;
+    //  cout << "~~~~~~~~~~i = " << i << endl;
     if (the_vector[i] == value) return i;
-    //cout << "Here19"  ;
+    // cout << "Here19";
   }
-  //cout << "Here21"  ;
+  // cout << "Here21";
   return -1;
 }
 
@@ -67,16 +67,31 @@ void Board::missingInSquare(vector<int> &curr_missing, int row_num, int col_num)
   }
 }
 
-void Board::subtractTwoVectors(vector<int> &larger_vector, vector<int> &smaller_vector)
+void Board::subtractTwoVectors(vector<int> &larger_vector, vector<int> smaller_vector)
 {
   int found = -1;
   for (int i = 0; i < smaller_vector.size(); i++)
   {
-    //cout << "Here1" << endl;
+    // cout << "Here1" << endl;
     found = find(larger_vector, smaller_vector[i]);
     // cout << "Here16: " << found << endl;
-    if (found != -1) larger_vector.erase(larger_vector.begin()+found);
-    //cout << "Here17"  ;
+    // cout << "Here4: " << larger_vector.size() << endl;
+    // cout << "here" << endl;
+    if (found != -1)
+    {
+      // cout << "hi" << endl;
+      // for(int j = 0; j < larger_vector.size(); j++) {
+      //   cout << larger_vector[j] << " ";
+      // }
+      // cout << endl;
+      // cout << "Here5" << endl;
+      // larger_vector.begin();
+      // cout << "Here6" << endl;
+      larger_vector.erase(larger_vector.begin()+found);
+      // swap(larger_vector[0], larger_vector[larger_vector.size()-1]);
+      // larger_vector.pop_back();
+    }
+    // cout << "Here17" << endl;
   }
 }
 
@@ -86,27 +101,68 @@ bool Board::checkForOnlyOption(int index_to_avoid1, int index_to_avoid2, int pos
   for (int k = 1; k <= size; k++) possible_good_nums.push_back(k);
   for (int i = 0; i < size; i++)
   {
-    if (i != index_to_avoid2) subtractTwoVectors(possible_good_nums, the_board[index_to_avoid1][i]);
+    if (i != index_to_avoid2)
+    {
+      subtractTwoVectors(possible_good_nums, the_board[index_to_avoid1][i]);
+      if (the_board[index_to_avoid1][index_to_avoid2] == the_board[index_to_avoid1][i] && the_board[index_to_avoid1][index_to_avoid2].size() == 2)
+      {
+        for (int j = 0; j < size; j++)
+        {
+          if (j != index_to_avoid2 && j != i)
+          {
+            subtractTwoVectors(the_board[index_to_avoid1][j], the_board[index_to_avoid1][index_to_avoid2]);
+          }
+        }
+      }
+    }
   }
   if (find(possible_good_nums, possible_good_num) != -1) return true;
   possible_good_nums.clear();
   for (int k = 1; k <= size; k++) possible_good_nums.push_back(k);
   for (int i = 0; i < size; i++)
   {
-    if (i != index_to_avoid1) subtractTwoVectors(possible_good_nums, the_board[i][index_to_avoid2]);
+    if (i != index_to_avoid1)
+    {
+      subtractTwoVectors(possible_good_nums, the_board[i][index_to_avoid2]);
+      if (the_board[index_to_avoid1][index_to_avoid2] == the_board[i][index_to_avoid2] && the_board[index_to_avoid1][index_to_avoid2].size() == 2)
+      {
+        for (int j = 0; j < size; j++)
+        {
+          if (j != index_to_avoid1 && j != i)
+          {
+            subtractTwoVectors(the_board[j][index_to_avoid2], the_board[index_to_avoid1][index_to_avoid2]);
+          }
+        }
+      }
+    }
   }
   if (find(possible_good_nums, possible_good_num) != -1) return true;
   possible_good_nums.clear();
   for (int k = 1; k <= size; k++) possible_good_nums.push_back(k);
-  for (int i = index_to_avoid1-(index_to_avoid1%3); i < (index_to_avoid1-(index_to_avoid1%3))+sqrt(size); i++)
+  int square_root = sqrt(size);
+  for (int i = index_to_avoid1-(index_to_avoid1%square_root); i < (index_to_avoid1-(index_to_avoid1%square_root))+square_root; i++)
   {
-    for (int j = index_to_avoid2-(index_to_avoid2%3); j < (index_to_avoid2-(index_to_avoid2%3))+sqrt(size); j++)
+    for (int j = index_to_avoid2-(index_to_avoid2%square_root); j < (index_to_avoid2-(index_to_avoid2%square_root))+square_root; j++)
     {
       if (i != index_to_avoid1 || j != index_to_avoid2)
       {
-        //cout << "Here14"  ;
+        // cout << "Here14" << i << endl;
+        // cout << "Here15" << j << endl;
         subtractTwoVectors(possible_good_nums, the_board[i][j]);
-        //cout << "Here13"  ;
+        // cout << "Here13" << endl;
+        if (the_board[index_to_avoid1][index_to_avoid2] == the_board[i][j] && the_board[index_to_avoid1][index_to_avoid2].size() == 2)
+        {
+          for (int k = index_to_avoid1-(index_to_avoid1%square_root); k < (index_to_avoid1-(index_to_avoid1%square_root))+square_root; k++)
+          {
+            for (int l = index_to_avoid2-(index_to_avoid2%square_root); l < (index_to_avoid2-(index_to_avoid2%square_root))+square_root; l++)
+            {
+              if ((k != index_to_avoid1 || l != index_to_avoid2) && (k != i || l != j))
+              {
+                subtractTwoVectors(the_board[k][l], the_board[index_to_avoid1][index_to_avoid2]);
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -149,6 +205,7 @@ void Board::solve()
     // cout << "Here1" << endl;
     // changed = false;
     changed = initialize();
+    int temp = -1;
     for (int i = 0; i < size; i++)
     {
       for (int j = 0; j < size; j++)
@@ -160,8 +217,9 @@ void Board::solve()
           {
             if (checkForOnlyOption(i, j, the_board[i][j][k]))
             {
+              temp = the_board[i][j][k];
               the_board[i][j].clear();
-              the_board[i][j].push_back(the_board[i][j][k]);
+              the_board[i][j].push_back(temp);
               // changed = true;
               // break;
             }
@@ -214,8 +272,8 @@ bool Board::guesser(int curr_i, int curr_j)
 void Board::solveEverything()
 {
   // Uncomment the next line to add guessing capabilities (and you can comment out the "solve()" line)
-  guesser(0, 0);
-  // solve();
+  // guesser(0, 0);
+  solve();
 }
 
 string Board::print(bool &is_finished)

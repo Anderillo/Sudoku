@@ -1,5 +1,6 @@
 #include <fstream>
 #include <locale>
+#include <sys/resource.h>
 #include "Board.h"
 
 using namespace std;
@@ -52,7 +53,7 @@ int check(string file_name)
   // For checking that the input is a perfect square of a perfect square.
   double size_doub = sqrt(sqrt(counter));
   int size_int = size_doub;
-  if (!is_good || size_doub != size_int || greatest_num > sqrt(counter))
+  if (!is_good || size_doub != size_int || greatest_num > sqrt(counter))// || counter < ((counter*2)-1))
   {
     file.close();
     return -1;
